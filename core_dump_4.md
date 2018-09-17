@@ -12,8 +12,10 @@ gdb上で「source <pythonソースファイル名>」で実行することが�
 ## 実行例（簡単な例）
 以下の例では、
 
-    print('Exeucte [bt] command.')
-    gdb.execute('bt')
+```python
+print('Exeucte [bt] command.')
+gdb.execute('bt')
+```
 
 と書かれたPythonスクリプトを呼び出している。ここでは単にバックトレースを表示する。
 
@@ -29,9 +31,11 @@ gdb上で「source <pythonソースファイル名>」で実行することが�
 「gdb.exexute(<gdbコマンド>, to_string=True)」で、gdbコマンドで出力した文字列を取り込むことができる。
 以下の例では、
 
-    s = gdb.execute('x/2gx list', to_string=True)
-    s = s.split()
-    print('hex1={0} hex2={1}'.format(s[1], s[2]))
+```python
+s = gdb.execute('x/2gx list', to_string=True)
+s = s.split()
+print('hex1={0} hex2={1}'.format(s[1], s[2]))
+```
 
 と書かれたPythonスクリプトを呼び出している。
 list変数に対するメモリダンプをgdbで表示し、値を取り込んで編集して表示している。
@@ -47,14 +51,16 @@ list変数に対するメモリダンプをgdbで表示し、値を取り込ん�
 
 例えば、以下のような構造体によるリンクドリストで作られたlistという名前の変数があるとする：
 
-    struct list_t {
-        struct list_t* next; // 次のリストのポインタ。データがない場合はNULLとする
-        uint64_t data;       // データ
-    };
-    struct list_t* list = NULL;
-    ・・・
-    list = append_list(list, data);   // list にデータを追加する
-　
+```c
+struct list_t {
+    struct list_t* next; // 次のリストのポインタ。データがない場合はNULLとする
+    uint64_t data;       // データ
+};
+struct list_t* list = NULL;
+・・・
+list = append_list(list, data);   // list にデータを追加する
+```
+
 このデータ構造に対して、逐一コマンドを打ってdataフィールドの内容を表示しようと考えたならば、例えば以下のようにコマンドを入力していくことになるだろう（「x/2gx」コマンドで、引数のアドレスを、２つ・８バイト区切りで・１６進数で表示する。ここでは、１番目のデータがnext、２つめのデータがdataになる）：
 
     (gdb) x/2gx list
@@ -67,13 +73,15 @@ list変数に対するメモリダンプをgdbで表示し、値を取り込ん�
 
 これを、Pythonスクリプトで自動化する。この場合、以下のようなスクリプトを準備する：
 
-    addr = "list"
-    while addr != "0x0000000000000000":
-        command = 'x/2gx {0}'.format(addr)
-        r = gdb.execute(command, to_string=True).strip().split('\t')
-        print(r[2])
-        addr = r[1]
-　
+```python
+addr = "list"
+while addr != "0x0000000000000000":
+    command = 'x/2gx {0}'.format(addr)
+    r = gdb.execute(command, to_string=True).strip().split('\t')
+    print(r[2])
+    addr = r[1]
+```
+
 このスクリプトでは、「x/2gx」を実行しその出力文字列を保存する。
 ２番目のデータを表示し、１番目のデータを次のアドレスとして「x/2gx」をさらに実行する動作をNULLに到達するまで次々とおこなう。
 
