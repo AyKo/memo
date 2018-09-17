@@ -43,22 +43,22 @@ gdbには多くのコマンドがあるが、いくつかのコマンドを知�
 
 - backtrace (bt)  
   コールスタック（関数呼び出し履歴）の表示
-- print (p)
+- print (p)  
   変数などの表示
 - frame (f)  
   コールスタックを移動
 - x  
   メモリダンプ
-- info thread
+- info thread  
   全スレッドの表示
 - thread(th)  
   スレッドの移動
-- thread apply all bt
+- thread apply all bt  
   全スレッドのコールスタックを表示
-- maintenance info sections
+- maintenance info sections  
   メモリマップの表示
 	
-例）コールスタックの表示
+#### 例）コールスタックの表示
 
     (gdb) bt
     #0  0x00007f135dbc19be in memcpy () from /lib64/libc.so.6
@@ -71,7 +71,7 @@ Signal 11(SIGSEGV)でダウンしているので、メモリの不正参照で�
 testprogram.cの27行目のmemcpy()が問題と思われる。
 
 
-例）コールスタックの移動・変数表示
+#### 例）コールスタックの移動・変数表示
 
     (gdb) f 1
     #1  0x0000000000400b48 in message_receiver_thread (arg=0x1deb8e0) at testprogram.c:27
@@ -86,8 +86,7 @@ testprogram.cの27行目のmemcpy()が問題と思われる。
 デバッグとしては、msg->sizeを設定した部分がどこで、それがどうしてかを調べることになる。
 直接の原因としてはほとんど確定だが、もう少し確認する。
 
-
-例）memcpy()のdstアドレスの確認
+#### 例）memcpy()のdstアドレスの確認
 
     (gdb) f 1
     #1  0x0000000000400b48 in message_receiver_thread (arg=0x1deb8e0) at testprogram.c:27
