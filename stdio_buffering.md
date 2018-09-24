@@ -27,34 +27,30 @@ printf()、fwrite() をはじめとした標準入出力ライブラリ(stdio.h)
 それ以外、例えばprintf()を用いていて、出力先がファイルであったりパイプであったりする場合はバッファリング制御されてしまう。
 
 バッファリング制御されてしまう例：
-- ./program > log.txt
-- ./program | grep "important"
+- ``` ./program > log.txt ```
+- ``` ./program | grep "important" ```
 
 ### grepなどのコマンドもバッファリング制御される
 なお、一般的に用いる grep コマンド等も標準入出力ライブラリによってバッファリング制御されることが多い。
 
 例えば、ログファイルを grep 等でパイプにて２重以上にフィルタをする場合はバッファリング制御される。
 以下、コンソールからコマンドを入力したとして：
-- バッファリングされない
+- バッファリングされない   
+``` tail -f logfile.txt | grep "important" ```
 
-    tail -f logfile.txt | grep "important"
-
-- バッファリングされる
-
-    tail -F logfile.txt | grep "important" | grep "error"
-    (grep "important" でバッファリングされる。grep "error" はコンソールが出力先なのでバッファリングされない。なお tail はプログラムの作りでバッファ制御されないようになっている)
+- バッファリングされる  
+``` tail -F logfile.txt | grep "important" | grep "error" ```  
+ (grep "important" でバッファリングされる。grep "error" はコンソールが出力先なのでバッファリングされない。なお tail はプログラムの作りでバッファ制御されないようになっている)
 
 grep などには、バッファリング制御を変更するオプション「--line-buffered」があり、これをしていると期待通りになる。
 
-- バッファリングされない
-
-    tail -F logfile.txt | grep --line-buffered "important" | grep "error"
+- バッファリングされない  
+``` tail -F logfile.txt | grep --line-buffered "important" | grep "error" ```
 
 また、上記で述べた stdbuf コマンドを用いても期待通りになる。stdbuf コマンドはいかなるコマンドを対象にできるため、汎用的に使えて便利である。
 
-- バッファリングされない
-
-    tail -F logfile.txt | stdbuf -oL grep "important" | grep "error"
+- バッファリングされない  
+``` tail -F logfile.txt | stdbuf -oL grep "important" | grep "error" ```
 
 ### 他のバッファリング制御をとめるやり方
 特にテキストストリームに対してのフィルタをおこなうコマンドでは、バッファリング制御を変更する方法を知っておくと便利である。
